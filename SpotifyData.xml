@@ -1,0 +1,536 @@
+<form theme="dark">
+  <label>Spotify Data</label>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="time" token="field1">
+      <label>Data da pesquisa</label>
+      <default>
+        <earliest>0</earliest>
+        <latest></latest>
+      </default>
+    </input>
+    <input type="text" token="field2">
+      <label>Música</label>
+      <default>*</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel id="primeiro">
+      <title>Arstistas mais escutados e seu tempo de reprodução</title>
+      <chart>
+        <search>
+          <query>index="spotify" sourcetype="streaminghistory_json"
+| spath output=musica path=trackName
+| search musica=$field2$
+| spath output=artista path=artistName
+| spath output=tempoFinalizado path=endTime
+| spath output=tempoReproduzidoMs path=msPlayed
+| eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = floor(tempoReproduzidoSeg/60)
+| stats count(musica) as tot sum(tempoReproduzidoMin) as tempo  by artista 
+| sort tot desc
+| head 15
+| rename tot as "Total de músicas por artista" tempo as "Tempo total escutado por artista"</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.backgroundColor">#282828</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.overlayFields">"Tempo total escutado por artista"</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.fieldColors">{"Total de músicas por artista": #1ED760, "Tempo total escutado por artista": #AAAAAA}</option>
+        <option name="charting.fontColor">#fff</option>
+        <option name="charting.foregroundColor">#fff</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row id="linha2">
+    <panel id="lula">
+      <title>Música mais escutada</title>
+      <html>
+        <div style="background-color: #282828!important;">
+           
+      </div>
+      </html>
+      <single id="nome_musica">
+        <search>
+          <query>index="spotify" sourcetype="streaminghistory_json"
+| spath output=musica path=trackName
+| search musica=$field2$
+| spath output=artista path=artistName
+| spath output=tempoFinalizado path=endTime
+| spath output=tempoReproduzidoMs path=msPlayed
+| eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = tempoReproduzidoSeg/60
+| stats count(musica) as total by musica
+| sort total desc
+| table musica</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">103</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trellis.splitBy">_aggregation</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+      <single id="quantidade_musica">
+        <search>
+          <query>index="spotify" sourcetype="streaminghistory_json"
+| spath output=musica path=trackName
+| search musica=$field2$
+| spath output=artista path=artistName
+| spath output=tempoFinalizado path=endTime
+| spath output=tempoReproduzidoMs path=msPlayed
+| eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = tempoReproduzidoSeg/60
+| stats count(musica) as total by musica
+| sort total desc
+| table total</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">53</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x1ed760","0x1ed760"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trellis.splitBy">_aggregation</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unit">vezes</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel id="segundo">
+      <title>Músicas mais ouvidas por mês</title>
+      <chart>
+        <search>
+          <query>index="spotify" sourcetype="streaminghistory_json"
+| bin span=1mon _time 
+| spath output=musica path=trackName
+| search musica=$field2$
+| spath output=artista path=artistName
+| spath output=tempoFinalizado path=endTime
+| spath output=tempoReproduzidoMs path=msPlayed
+| eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = ceil(tempoReproduzidoSeg/60)
+| stats count(musica) as maxm by musica _time
+| sort maxm desc
+| dedup _time
+| sort _time
+| timechart list(maxm) by musica limit=15</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">log</option>
+        <option name="charting.backgroundColor">#282828</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.fontColor">#fff</option>
+        <option name="charting.foregroundColor">#fff</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="charting.seriesColors">[#006400, #008000, ,#228B22, #1ED760, #b9f27d,#a4ec79, #6cd86c, #47cd66, #00c464, #00bd65, #1db954, #8be373, #00FF7F, #00FA9A, #3CB371]</option>
+        <option name="height">248</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">small</option>
+        <option name="trellis.splitBy">musica</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart id="esquerda">
+        <title>Total de música e minutos visão mensal</title>
+        <search>
+          <query>index="spotify" sourcetype="streaminghistory_json"
+| spath output=musica path=trackName
+| search musica=$field2$
+| spath output=artista path=artistName
+| spath output=tempoFinalizado path=endTime
+| spath output=tempoReproduzidoMs path=msPlayed
+| eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = ceil(tempoReproduzidoSeg/60)
+| timechart count(musica) as "Total de musicas" sum(tempoReproduzidoMin) as "Total de minutos"</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.backgroundColor">#282828</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.overlayFields">sum(proporcao)</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.fontColor">#fff</option>
+        <option name="charting.foregroundColor">#fff</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart id="direita">
+        <title>Visão diária</title>
+        <search>
+          <query>index="spotify" sourcetype="streaminghistory_json"
+| spath output=musica path=trackName
+| search musica=$field2$
+| spath output=artista path=artistName
+| spath output=tempoFinalizado path=endTime
+| spath output=tempoReproduzidoMs path=msPlayed
+| eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = ceil(tempoReproduzidoSeg/60)
+| timechart count(musica) as "Total de musicas" sum(tempoReproduzidoMin) as "Total de minutos" span=1d</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.backgroundColor">#282828</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.fontColor">#fff</option>
+        <option name="charting.foregroundColor">#fff</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Pesquisas realizadas</title>
+      <single id="total_pesquisa_android">
+        <title>Total</title>
+        <search>
+          <query>index="spotify" sourcetype="searchqueries_json"  
+| spath output=plataforma path=platform 
+| spath output=query path=searchQuery
+| spath output=urls path=searchInteractionURIs{} | spath output=tempoReproduzidoMs path=msPlayed | eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = tempoReproduzidoSeg/60
+| where plataforma="ANDROID_ARM"
+| stats count by plataforma
+| sort plataforma asc
+| table count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">176</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x1db954","0x13d760"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Android</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+      <single id="total_pesquisa_pc">
+        <title>Total</title>
+        <search>
+          <query>index="spotify" sourcetype="searchqueries_json"  
+| spath output=plataforma path=platform 
+| spath output=query path=searchQuery
+| spath output=urls path=searchInteractionURIs{} | spath output=tempoReproduzidoMs path=msPlayed | eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = tempoReproduzidoSeg/60
+| where plataforma="DESKTOP"
+| stats count by plataforma
+| sort plataforma desc
+| table count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">176</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x1ed760","0x1ed760"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">PC</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+      <single id="ontem_pesquisa_android">
+        <title>Dia anterior</title>
+        <search>
+          <query>index="spotify" sourcetype="searchqueries_json"  
+| spath output=plataforma path=platform 
+| spath output=query path=searchQuery
+| spath output=urls path=searchInteractionURIs{} | spath output=tempoReproduzidoMs path=msPlayed | eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = tempoReproduzidoSeg/60
+| where plataforma="ANDROID_ARM"
+| timechart count by plataforma</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">176</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x1ed760"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Android</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+      <single id="ontem_pesquisa_pc">
+        <title>Dia anterior</title>
+        <search>
+          <query>index="spotify" sourcetype="searchqueries_json"  
+| spath output=plataforma path=platform 
+| spath output=query path=searchQuery
+| spath output=urls path=searchInteractionURIs{} | spath output=tempoReproduzidoMs path=msPlayed | eval tempoReproduzidoSeg = tempoReproduzidoMs/1000, tempoReproduzidoMin = tempoReproduzidoSeg/60
+| where plataforma="DESKTOP"
+| timechart count by plataforma</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">176</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x1ed760"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">PC</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+      <style>   
+          h1, h2, h3 {
+           color:#C8C8C8;
+            }
+  
+         #lula, #lula2{
+           width: 15% !important;
+            text-align: center !important;
+            background-color: #282828!important;
+           
+           }
+           
+           #lula .panel-element-row{
+           text-align: center !important;
+           }
+           
+            #segundo{
+           width: 85% !important;
+           }
+      
+           #nome_musica, #quantidade_musica{
+           width: 100% !important;
+           }
+          
+           #dados_de_pesquisa{
+           width: 40% !important;
+           }
+           
+            .dashboard-body {
+              background-color: #282828;
+            }
+            
+            .panel-title {
+           background-color:  #282828;
+           }  
+           
+             .dashboard-row .dashboard-panel .panel-head h3  {
+           background-color:  #282828;
+           }  
+           
+           splunk-view splunk-chart{
+           background-color:  #282828;
+           }
+           
+           .dashboard-row .dashboard-panel{
+           background-color:  #282828!important;
+           }
+           
+           dashboard-row .dashboard-panel{
+           background-color:  #282828!important;
+           }
+           
+           #linha2, #nome_musica, #quantidade_musica, #total_pesquisa_pc, #total_pesquisa_android, #ontem_pesquisa_pc, #ontem_pesquisa_android, #row_apagar2, #panel_apagar2, #nome_musica{
+            background-color: #282828!important;
+           }
+           
+           .dashboard-row .dashboard-panel .panel-body.html, .dashboard-row .dashboard-panel .panel-body.splunk-html{
+           background-color:  #282828;
+           }
+      </style>
+    </html>
+    </panel>
+  </row>
+</form>
