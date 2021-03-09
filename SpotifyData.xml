@@ -470,13 +470,15 @@
   <row>
     <panel>
       <html>
-      <style>   
+      <style>
+        
           h1, h2, h3 {
            color:#C8C8C8;
             }
-  
+          
+          
          #lula, #lula2{
-           width: 15% !important;
+           width: 20% !important;
             text-align: center !important;
             background-color: #282828!important;
            
@@ -487,9 +489,11 @@
            }
            
             #segundo{
-           width: 85% !important;
+           width: 80% !important;
            }
-      
+           
+       
+           
            #nome_musica, #quantidade_musica{
            width: 100% !important;
            }
@@ -498,21 +502,10 @@
            width: 40% !important;
            }
            
-            .dashboard-body {
+            .dashboard-body, .panel-title, .dashboard-row .dashboard-panel .panel-head h3, splunk-view splunk-chart  {
               background-color: #282828;
             }
-            
-            .panel-title {
-           background-color:  #282828;
-           }  
-           
-             .dashboard-row .dashboard-panel .panel-head h3  {
-           background-color:  #282828;
-           }  
-           
-           splunk-view splunk-chart{
-           background-color:  #282828;
-           }
+
            
            .dashboard-row .dashboard-panel{
            background-color:  #282828!important;
@@ -529,6 +522,11 @@
            .dashboard-row .dashboard-panel .panel-body.html, .dashboard-row .dashboard-panel .panel-body.splunk-html{
            background-color:  #282828;
            }
+           
+           .dashboard-menu {
+              display: none;
+           }
+           
       </style>
     </html>
     </panel>
